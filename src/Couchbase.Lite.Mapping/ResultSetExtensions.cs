@@ -7,10 +7,43 @@ using Newtonsoft.Json.Linq;
 namespace Couchbase.Lite
 {
     public static class ResultSetExtensions
-    {
+    {     
+        /*
         public static T ToObject<T>(this Query.Result result)
         {
-            T obj = default;
+            return DictionaryExtensions.ToObject<T>(result);
+        }
+        */
+
+        public static object ToObject(this Query.Result result, Type fallbackType)
+        {
+            object obj = default;
+
+            var dbObject = result.GetDictionary("Database");
+            Type type = null;
+
+            if (dbObject != null)
+            {
+                string typeName = dbObject.GetString("$type");
+
+                if (typeName != null)
+                {
+                    type = Type.GetType(typeName);
+                }
+            }
+
+            if (type == null && fallbackType != null)
+            {
+                if (fallbackType != null)
+                {
+                    type = fallbackType;
+                }
+                else
+                {
+                    // todo: 
+                    throw new Exception();
+                }
+            }
 
             if (result != null)
             {
@@ -59,13 +92,18 @@ namespace Couchbase.Lite
 
                         if (rootJObj != null)
                         {
-                            obj = rootJObj.ToObject<T>();
+                            obj = rootJObj.ToObject(type);
                         }
                     }
                 }
             }
 
             return obj;
+        }
+
+        public static T ToObject<T>(this Query.Result result, Type fallbackType = null)
+        {
+            return (T)ToObject(result, typeof(T));
         }
 
         public static IEnumerable<T> ToObjects<T>(this List<Query.Result> results)
@@ -85,7 +123,7 @@ namespace Couchbase.Lite
 
                 foreach (var result in results)
                 {
-                    var obj = ToObject<T>(result);
+                    var obj = ToObject<T>(result, typeof(T));
 
                     if (obj != default)
                     {
@@ -96,5 +134,65 @@ namespace Couchbase.Lite
 
             return objects;
         }
+
+        /*
+        public static IEnumerable<object> ToObjects(this List<Query.Result> results)
+        {
+            List<object> objects = new List<object>();
+
+            if (results?.Count > 0)
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new ExcludeStreamPropertiesResolver()
+                };
+
+                settings.Converters?.Add(new BlobToBytesJsonConverter());
+
+                objects = new List<object>();
+
+                foreach (var result in results)
+                {
+                    object obj = DictionaryExtensions.ToObject(result);
+
+                    if (obj != default)
+                    {
+                        objects.Add(obj);
+                    }
+                }
+            }
+
+            return objects;
+        }
+        */
+
+        /*
+        public static IEnumerable<T> ToObjects<T>(this List<Query.Result> results)
+        {
+            List<T> objects = new List<T>();
+
+            if (results?.Count > 0)
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new ExcludeStreamPropertiesResolver()
+                };
+
+                settings.Converters?.Add(new BlobToBytesJsonConverter());
+
+                foreach (var result in results)
+                {
+                    T obj = (T)DictionaryExtensions.ToObject(result, typeof(T));
+
+                    if (obj != default)
+                    {
+                        objects.Add(obj);
+                    }
+                }
+            }
+
+            return objects;
+        }
+        */
     }
 }

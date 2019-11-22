@@ -16,6 +16,8 @@ namespace Couchbase.Lite.Mapping.Tests
             var mutableDocument = new MutableDocument("test_id",dictionary);
 
             var simpleObject = mutableDocument.ToObject<TestObjects.SimpleObject>();
+
+            object obj = mutableDocument.ToObject(typeof(TestObjects.SimpleObject));
         }
 
         [Fact]
@@ -29,7 +31,9 @@ namespace Couchbase.Lite.Mapping.Tests
 
             var mutableDocument = new MutableDocument("test_id", dictionary);
 
-            var simpleObject = mutableDocument.ToObject<TestObjects.SimpleObject>();
+            var generic = mutableDocument.ToObject<TestObjects.SimpleObject>();
+
+            object nonGeneric = mutableDocument.ToObject(typeof(TestObjects.SimpleObject));
         }
 
         [Fact]
@@ -44,6 +48,8 @@ namespace Couchbase.Lite.Mapping.Tests
             var mutableDocument = new MutableDocument("test_id", dictionary);
 
             var simpleObject = mutableDocument.ToObject<TestObjects.SimpleObject>();
+
+            object obj = mutableDocument.ToObject(typeof(TestObjects.SimpleObject));
         }
 
         /*

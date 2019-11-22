@@ -12,28 +12,40 @@ namespace Couchbase.Lite
 {
     public static class ObjectExtensions
     {
+        static Dictionary<Type, IEnumerable<PropertyInfo>> _objectProperties = new Dictionary<Type, IEnumerable<PropertyInfo>>();
+
         public static MutableDocument ToMutableDocument<T>(this T obj,
-                                                           IPropertyNameConverter propertyNameConverter)
+                                                           IPropertyNameConverter propertyNameConverter = null)
         {
-            return ToMutableDocument(obj, null, propertyNameConverter);
+            string id = (string)GetProperties(obj)
+                .FirstOrDefault(x => (x.Name == "Id" || x.Name == "id") && (x.PropertyType == typeof(string)))
+                ?.GetValue(obj);
+
+            return ToMutableDocument(obj, id, propertyNameConverter);
         }
 
         public static MutableDocument ToMutableDocument<T>(this T obj, 
-                                                           string id = null, 
+                                                           string id, 
                                                            IPropertyNameConverter propertyNameConverter = null)
         {
             MutableDocument document;
 
-            if (id != null)
-            {
-                document = new MutableDocument(id);
-            }
-            else
+            if (string.IsNullOrEmpty(id))
             {
                 document = new MutableDocument();
             }
+            else
+            {
+                document = new MutableDocument(id);
+            }
 
             var dictionary = GetDictionary(obj, propertyNameConverter);
+            Type objType = obj.GetType();
+
+            if (!IsSimple(objType) && objType.IsClass)
+            {
+                dictionary.Add("$type", obj.GetType().AssemblyQualifiedName);
+            }
 
             if (dictionary != null)
             {
@@ -43,13 +55,29 @@ namespace Couchbase.Lite
             return document;
         }
 
+        static IEnumerable<PropertyInfo> GetProperties(object obj)
+        {
+            if(obj == null)
+            {
+                throw new ArgumentNullException("obj");
+            }
+
+            Type type = obj.GetType();
+
+            if (!_objectProperties.ContainsKey(type))
+            {
+                _objectProperties.Add(type, type.GetProperties(
+                    BindingFlags.Public | BindingFlags.Instance).Where(pi => !Attribute.IsDefined(pi, typeof(JsonIgnoreAttribute)))?.ToList());
+            }
+
+            return _objectProperties[type];
+        }
+
         static Dictionary<string, object> GetDictionary(object obj, IPropertyNameConverter propertyNameConverter = null)
         {
             var dictionary = new Dictionary<string, object>();
 
-            var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(pi => !Attribute.IsDefined(pi, typeof(JsonIgnoreAttribute)))?.ToList();
-
-            foreach (PropertyInfo propertyInfo in properties)
+            foreach (PropertyInfo propertyInfo in GetProperties(obj))
             {
                 string propertyName;
 
