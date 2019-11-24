@@ -48,13 +48,7 @@ namespace Couchbase.Lite
                 {
                     if (document.ToDictionary()?.Count > 0)
                     {
-                        var settings = new JsonSerializerSettings
-                        {
-                            ContractResolver = new ExcludeStreamPropertiesResolver()
-                        };
-
-                        settings.Converters.Add(new BlobToBytesJsonConverter());
-                        settings.Converters.Add(new DateTimeOffsetToDateTimeJsonConverter());
+                        var settings = Constants.JsonSettings;
 
                         var dictionary = document.ToMutable()?.ToDictionary();
 

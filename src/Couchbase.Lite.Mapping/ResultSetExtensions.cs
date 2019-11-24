@@ -47,12 +47,7 @@ namespace Couchbase.Lite
 
             if (result != null)
             {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new ExcludeStreamPropertiesResolver()
-                };
-
-                settings.Converters?.Add(new BlobToBytesJsonConverter());
+                var settings = Constants.JsonSettings;
 
                 JObject rootJObj = new JObject();
 
@@ -112,12 +107,7 @@ namespace Couchbase.Lite
 
             if (results?.Count > 0)
             {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new ExcludeStreamPropertiesResolver()
-                };
-
-                settings.Converters?.Add(new BlobToBytesJsonConverter());
+                var settings = Constants.JsonSettings;
 
                 objects = new List<T>();
 
@@ -142,12 +132,7 @@ namespace Couchbase.Lite
 
             if (results?.Count > 0)
             {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new ExcludeStreamPropertiesResolver()
-                };
-
-                settings.Converters?.Add(new BlobToBytesJsonConverter());
+                var settings = Constants.JsonSettings;
 
                 objects = new List<object>();
 
@@ -173,12 +158,7 @@ namespace Couchbase.Lite
 
             if (results?.Count > 0)
             {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new ExcludeStreamPropertiesResolver()
-                };
-
-                settings.Converters?.Add(new BlobToBytesJsonConverter());
+                var settings = Constants.JsonSettings;
 
                 foreach (var result in results)
                 {

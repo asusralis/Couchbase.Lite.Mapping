@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,9 @@ namespace Couchbase.Lite
 {
     public static class ObjectExtensions
     {
-        static Dictionary<Type, IEnumerable<PropertyInfo>> _objectProperties = new Dictionary<Type, IEnumerable<PropertyInfo>>();
+        //static Dictionary<Type, IEnumerable<PropertyInfo>> _objectProperties = new Dictionary<Type, IEnumerable<PropertyInfo>>();
+
+        static ConcurrentDictionary<Type, IEnumerable<PropertyInfo>> _objectProperties = new ConcurrentDictionary<Type, IEnumerable<PropertyInfo>>();
 
         public static MutableDocument ToMutableDocument<T>(this T obj,
                                                            IPropertyNameConverter propertyNameConverter = null)
@@ -44,7 +47,7 @@ namespace Couchbase.Lite
 
             if (!IsSimple(objType) && objType.IsClass)
             {
-                dictionary.Add("$type", obj.GetType().AssemblyQualifiedName);
+                //dictionary.Add("$type", obj.GetType().AssemblyQualifiedName);
             }
 
             if (dictionary != null)
@@ -66,7 +69,7 @@ namespace Couchbase.Lite
 
             if (!_objectProperties.ContainsKey(type))
             {
-                _objectProperties.Add(type, type.GetProperties(
+                _objectProperties.TryAdd(type, type.GetProperties(
                     BindingFlags.Public | BindingFlags.Instance).Where(pi => !Attribute.IsDefined(pi, typeof(JsonIgnoreAttribute)))?.ToList());
             }
 
@@ -76,6 +79,8 @@ namespace Couchbase.Lite
         static Dictionary<string, object> GetDictionary(object obj, IPropertyNameConverter propertyNameConverter = null)
         {
             var dictionary = new Dictionary<string, object>();
+
+            dictionary.Add("$type", obj.GetType().AssemblyQualifiedName);
 
             foreach (PropertyInfo propertyInfo in GetProperties(obj))
             {

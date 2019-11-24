@@ -9,6 +9,7 @@
     <Import_RootNamespace>Couchbase.Lite.Mapping.Shared.Tests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)TypeTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AutoIdTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AutoTypeTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestObjects\AutoType.cs" />
