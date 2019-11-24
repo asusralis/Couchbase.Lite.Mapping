@@ -45,6 +45,11 @@ namespace Couchbase.Lite
                 }
             }
 
+            var serializer = new JsonSerializer()
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
             if (result != null)
             {
                 var settings = Constants.JsonSettings;
@@ -87,7 +92,7 @@ namespace Couchbase.Lite
 
                         if (rootJObj != null)
                         {
-                            obj = rootJObj.ToObject(type);
+                            obj = rootJObj.ToObject(type, serializer);
                         }
                     }
                 }

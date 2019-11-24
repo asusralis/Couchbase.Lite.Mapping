@@ -6,7 +6,7 @@ namespace Couchbase.Lite.Mapping.Tests
 {
     public class TypeTest
     {
-        class A
+        class A : IA
         {
             public int X { get; set; } = 3;
         }
@@ -16,10 +16,15 @@ namespace Couchbase.Lite.Mapping.Tests
             public int Y { get; set; } = 5;
         }
 
+        interface IA
+        {
+
+        }
+
 
         class ComplexObject
         {
-            public A Foo { get; set; } = new B();
+            public IA Foo { get; set; } = new B();
         }
 
         [Fact]

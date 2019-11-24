@@ -119,7 +119,7 @@ namespace Couchbase.Lite
                         propertyName = Settings.PropertyNameConverter.Convert(propertyInfo.Name);
                     }
 
-                    AddDictionaryValue(ref dictionary, propertyName, propertyValue, propertyInfo.PropertyType, propertyNameConverter);
+                    AddDictionaryValue(ref dictionary, propertyName, propertyValue, propertyValue.GetType(), propertyNameConverter);
                 }
             }
 
