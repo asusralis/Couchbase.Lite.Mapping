@@ -41,6 +41,11 @@ namespace Couchbase.Lite.Mapping
                 }
             }
 
+            JsonSerializer serializer = new JsonSerializer()
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
             try
             {
                 if (dictionaryObj != null)
@@ -61,7 +66,7 @@ namespace Couchbase.Lite.Mapping
 
                                 if (jObj != null)
                                 {
-                                    obj = jObj.ToObject(type);
+                                    obj = jObj.ToObject(type, serializer);
                                 }
                                 else
                                 {

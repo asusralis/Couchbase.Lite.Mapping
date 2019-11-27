@@ -140,6 +140,10 @@ namespace Couchbase.Lite
             {
                 dictionary[propertyName] = new DateTimeOffset((DateTime)propertyValue);
             }
+            else if(propertyType == typeof(TimeSpan))
+            {
+                dictionary[propertyName] = propertyValue.ToString();
+            }
             else if (!propertyType.IsSimple() && !propertyType.IsEnum && propertyType.IsClass && propertyValue != null)
             {
                 if (typeof(IEnumerable).IsAssignableFrom(propertyType))
