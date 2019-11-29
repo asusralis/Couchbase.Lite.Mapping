@@ -45,11 +45,6 @@ namespace Couchbase.Lite
             var dictionary = GetDictionary(obj, propertyNameConverter);
             Type objType = obj.GetType();
 
-            if (!IsSimple(objType) && objType.IsClass)
-            {
-                //dictionary.Add("$type", obj.GetType().AssemblyQualifiedName);
-            }
-
             if (dictionary != null)
             {
                 document.SetData(dictionary);
