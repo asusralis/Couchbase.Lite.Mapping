@@ -1,3 +1,5 @@
+This repo adds type handeling. Use at your own risk!
+
 **This is an independent, open source couchbaselabs project, and is NOT officially supported by Couchbase, Inc.**
 
 # Couchbase.Lite.Mapping
