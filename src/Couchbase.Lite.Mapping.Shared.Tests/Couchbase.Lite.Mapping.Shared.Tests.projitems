@@ -9,9 +9,14 @@
     <Import_RootNamespace>Couchbase.Lite.Mapping.Shared.Tests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)TypeTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AutoIdTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AutoTypeTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestObjects\AutoType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestObjects\NestedSimpleObject.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)TestObjects\SimpleObject.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)TestObjects\SimpleObjectWithArray.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <Compile Include="$(MSBuildThisFileDirectory)TestObjects\SimpleObjectWithId.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestObjects\SimpleObjectWithList.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)MutableDocumentTests.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)NestedSimpleObjectTests.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
@@ -27,8 +32,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)TestObjects\SimpleObjectWithEnum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonPropertyAttributeTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestObjects\SimpleObjectWithJsonPropertyAttribute.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)TestObjects\" />
   </ItemGroup>
 </Project>

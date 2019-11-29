@@ -1,25 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using Couchbase.Lite.Mapping;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Couchbase.Lite
 {
     public static class ResultSetExtensions
-    {
+    {     
+        /*
         public static T ToObject<T>(this Query.Result result)
         {
-            T obj = default;
+            return DictionaryExtensions.ToObject<T>(result);
+        }
+        */
+
+        public static object ToObject(this Query.Result result, Type fallbackType)
+        {
+            object obj = default;
+
+            var dbObject = result.GetDictionary("Database");
+            Type type = null;
+
+            if (dbObject != null)
+            {
+                string typeName = dbObject.GetString("$type");
+
+                if (typeName != null)
+                {
+                    type = Type.GetType(typeName);
+                }
+            }
+
+            if (type == null && fallbackType != null)
+            {
+                if (fallbackType != null)
+                {
+                    type = fallbackType;
+                }
+                else
+                {
+                    // todo: 
+                    throw new Exception();
+                }
+            }
+
+            var serializer = new JsonSerializer()
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead
+            };
 
             if (result != null)
             {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new ExcludeStreamPropertiesResolver()
-                };
-
-                settings.Converters?.Add(new BlobToBytesJsonConverter());
+                var settings = Constants.JsonSettings;
 
                 JObject rootJObj = new JObject();
 
@@ -31,13 +66,15 @@ namespace Couchbase.Lite
                     {
                         JObject jObj = null;
 
+                        string json;
+
                         if (value.GetType() == typeof(DictionaryObject))
                         {
-                            var json = JsonConvert.SerializeObject(value, settings);
+                            json = JsonConvert.SerializeObject(value, settings);
 
                             if (!string.IsNullOrEmpty(json))
                             {
-                                jObj = JObject.Parse(json);
+                                jObj = JObject.Parse(json);                             
                             }
                         }
                         else
@@ -59,7 +96,7 @@ namespace Couchbase.Lite
 
                         if (rootJObj != null)
                         {
-                            obj = rootJObj.ToObject<T>();
+                            obj = rootJObj.ToObject(type, serializer);
                         }
                     }
                 }
@@ -68,24 +105,24 @@ namespace Couchbase.Lite
             return obj;
         }
 
+        public static T ToObject<T>(this Query.Result result, Type fallbackType = null)
+        {
+            return (T)ToObject(result, typeof(T));
+        }
+
         public static IEnumerable<T> ToObjects<T>(this List<Query.Result> results)
         {
             List<T> objects = default;
 
             if (results?.Count > 0)
             {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new ExcludeStreamPropertiesResolver()
-                };
-
-                settings.Converters?.Add(new BlobToBytesJsonConverter());
+                var settings = Constants.JsonSettings;
 
                 objects = new List<T>();
 
                 foreach (var result in results)
                 {
-                    var obj = ToObject<T>(result);
+                    var obj = ToObject<T>(result, typeof(T));
 
                     if (obj != default)
                     {
@@ -96,5 +133,55 @@ namespace Couchbase.Lite
 
             return objects;
         }
+
+        /*
+        public static IEnumerable<object> ToObjects(this List<Query.Result> results)
+        {
+            List<object> objects = new List<object>();
+
+            if (results?.Count > 0)
+            {
+                var settings = Constants.JsonSettings;
+
+                objects = new List<object>();
+
+                foreach (var result in results)
+                {
+                    object obj = DictionaryExtensions.ToObject(result);
+
+                    if (obj != default)
+                    {
+                        objects.Add(obj);
+                    }
+                }
+            }
+
+            return objects;
+        }
+        */
+
+        /*
+        public static IEnumerable<T> ToObjects<T>(this List<Query.Result> results)
+        {
+            List<T> objects = new List<T>();
+
+            if (results?.Count > 0)
+            {
+                var settings = Constants.JsonSettings;
+
+                foreach (var result in results)
+                {
+                    T obj = (T)DictionaryExtensions.ToObject(result, typeof(T));
+
+                    if (obj != default)
+                    {
+                        objects.Add(obj);
+                    }
+                }
+            }
+
+            return objects;
+        }
+        */
     }
 }
