@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Couchbase.Lite.Mapping;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -47,7 +48,8 @@ namespace Couchbase.Lite
 
             var serializer = new JsonSerializer()
             {
-                TypeNameHandling = TypeNameHandling.All
+                TypeNameHandling = TypeNameHandling.All,
+                MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead
             };
 
             if (result != null)
@@ -64,13 +66,15 @@ namespace Couchbase.Lite
                     {
                         JObject jObj = null;
 
+                        string json;
+
                         if (value.GetType() == typeof(DictionaryObject))
                         {
-                            var json = JsonConvert.SerializeObject(value, settings);
+                            json = JsonConvert.SerializeObject(value, settings);
 
                             if (!string.IsNullOrEmpty(json))
                             {
-                                jObj = JObject.Parse(json);
+                                jObj = JObject.Parse(json);                             
                             }
                         }
                         else

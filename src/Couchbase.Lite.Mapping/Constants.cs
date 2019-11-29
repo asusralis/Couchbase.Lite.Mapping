@@ -11,6 +11,7 @@ namespace Couchbase.Lite.Mapping
         {
             ContractResolver = new ExcludeStreamPropertiesResolver(),
             TypeNameHandling = TypeNameHandling.Objects,
+            MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead,
             Converters = new JsonConverter[]
             {
                 new BlobToBytesJsonConverter(),
