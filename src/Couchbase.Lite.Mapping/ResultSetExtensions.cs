@@ -112,7 +112,7 @@ namespace Couchbase.Lite
 
         public static IEnumerable<T> ToObjects<T>(this List<Query.Result> results)
         {
-            List<T> objects = default;
+            List<T> objects = new List<T>();
 
             if (results?.Count > 0)
             {
@@ -124,7 +124,7 @@ namespace Couchbase.Lite
                 {
                     var obj = ToObject<T>(result, typeof(T));
 
-                    if (obj != default)
+                    if (obj != null)
                     {
                         objects.Add(obj);
                     }
